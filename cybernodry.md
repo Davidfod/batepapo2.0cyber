@@ -10,35 +10,316 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
-        body { background: #0b0c10; color: #ffffff; display: flex; height: 100vh; overflow: hidden; }
-        .sidebar-left { width: 260px; background: #141519; border-right: 1px solid rgba(0, 255, 204, 0.1); display: flex; flex-direction: column; padding: 20px; justify-content: space-between; }
-        .sidebar-left h2 { font-size: 1rem; margin-bottom: 20px; color: #00ffcc; text-transform: uppercase; letter-spacing: 1.5px; }
-        .btn-call { width: 100%; display: flex; align-items: center; gap: 12px; background: #1f2026; border: 1px solid rgba(255, 255, 255, 0.05); color: #ffffff; padding: 12px; border-radius: 50px; cursor: pointer; font-weight: 600; transition: all 0.3s ease; }
-        .btn-call i { background: #5865F2; padding: 10px; border-radius: 50%; font-size: 1rem; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; }
-        .btn-call.active { border-color: #00ffcc; background: #132220; box-shadow: 0 0 15px rgba(0, 255, 204, 0.2); }
-        .btn-call.active i { background: #00ffcc; color: #0b0c10; }
-        .version-text { font-size: 0.75rem; color: rgba(0, 255, 204, 0.3); letter-spacing: 1px; font-weight: bold; }
-        .chat-area { flex: 1; display: flex; flex-direction: column; background: #1c1d24; }
-        .chat-header { padding: 20px; background: #141519; border-bottom: 1px solid rgba(255, 255, 255, 0.05); font-weight: bold; font-size: 1.1rem; }
-        .chat-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; }
-        .message { display: flex; gap: 14px; background: rgba(255, 255, 255, 0.02); padding: 14px; border-radius: 12px; width: fit-content; max-width: 75%; border: 1px solid rgba(255, 255, 255, 0.02); }
-        .message img { width: 42px; height: 42px; border-radius: 50%; object-fit: cover; border: 1px solid rgba(0, 255, 204, 0.2); }
-        .message-content { display: flex; flex-direction: column; }
-        .message .user-name { font-size: 0.9rem; color: #00ffcc; font-weight: bold; margin-bottom: 4px; }
-        .message .user-text { font-size: 0.95rem; white-space: pre-wrap; word-break: break-word; }
-        .chat-input-container { padding: 20px; background: #141519; border-top: 1px solid rgba(255, 255, 255, 0.05); }
-        .chat-input-form { display: flex; gap: 12px; }
-        .chat-input { flex: 1; background: #1f2026; border: 1px solid rgba(255, 255, 255, 0.08); padding: 16px; border-radius: 10px; color: #ffffff; outline: none; font-size: 1rem; }
-        .chat-input:focus { border-color: #00ffcc; }
-        .sidebar-right { width: 280px; background: #141519; border-left: 1px solid rgba(0, 255, 204, 0.1); padding: 20px; display: flex; flex-direction: column; gap: 24px; }
-        .profile-card { background: #1c1d24; padding: 24px 20px; border-radius: 16px; text-align: center; border: 1px solid rgba(255, 255, 255, 0.05); }
-        .profile-card img { width: 84px; height: 84px; border-radius: 50%; object-fit: cover; margin-bottom: 12px; border: 2px solid #0077ff; }
-        .profile-card h3 { font-size: 1.1rem; color: #ffffff; }
-        .edit-profile-box { display: flex; flex-direction: column; gap: 16px; }
-        .edit-profile-box label { font-size: 0.8rem; color: #888; text-transform: uppercase; font-weight: bold; }
-        .edit-profile-box input { background: #1c1d24; border: 1px solid rgba(255, 255, 255, 0.08); padding: 12px; border-radius: 8px; color: #ffffff; outline: none; font-size: 0.95rem; }
-        .btn-save { background: #00ffcc; color: #0b0c10; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        /* Cores e Configurações Gerais */
+        :root {
+            --bg-main: #0f1115;
+            --bg-sidebar: #161920;
+            --bg-card: #1f232b;
+            --accent: #00ffcc;
+            --accent-hover: #00ccaa;
+            --text-main: #f5f6f8;
+            --text-muted: #8a94a6;
+            --border-color: rgba(255, 255, 255, 0.06);
+        }
+
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif; 
+        }
+
+        body { 
+            background: var(--bg-main); 
+            color: var(--text-main); 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+        }
+
+        /* Barra Lateral Esquerda (Canais) */
+        .sidebar-left { 
+            width: 260px; 
+            background: var(--bg-sidebar); 
+            border-right: 1px solid var(--border-color); 
+            display: flex; 
+            flex-direction: column; 
+            padding: 24px 16px; 
+            justify-content: space-between; 
+        }
+
+        .sidebar-left h2 { 
+            font-size: 0.85rem; 
+            margin-bottom: 16px; 
+            color: var(--text-muted); 
+            text-transform: uppercase; 
+            letter-spacing: 1.5px; 
+            padding-left: 8px;
+        }
+
+        .btn-call { 
+            width: 100%; 
+            display: flex; 
+            align-items: center; 
+            gap: 14px; 
+            background: transparent; 
+            border: 1px solid transparent; 
+            color: var(--text-muted); 
+            padding: 12px 16px; 
+            border-radius: 12px; 
+            cursor: pointer; 
+            font-weight: 600; 
+            transition: all 0.25s ease; 
+        }
+
+        .btn-call i { 
+            background: #2b2f3a; 
+            padding: 10px; 
+            border-radius: 50%; 
+            font-size: 0.95rem; 
+            width: 36px; 
+            height: 36px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            transition: all 0.25s ease;
+            color: var(--text-main);
+        }
+
+        .btn-call:hover {
+            background: rgba(255, 255, 255, 0.03);
+            color: var(--text-main);
+        }
+
+        .btn-call.active { 
+            border-color: rgba(0, 255, 204, 0.2); 
+            background: rgba(0, 255, 204, 0.06); 
+            color: var(--accent);
+        }
+
+        .btn-call.active i { 
+            background: var(--accent); 
+            color: #000000; 
+            box-shadow: 0 0 12px rgba(0, 255, 204, 0.4);
+        }
+
+        .version-text { 
+            font-size: 0.7rem; 
+            color: var(--text-muted); 
+            letter-spacing: 2px; 
+            font-weight: bold; 
+            text-align: center;
+            opacity: 0.5;
+        }
+
+        /* Área Central do Chat */
+        .chat-area { 
+            flex: 1; 
+            display: flex; 
+            flex-direction: column; 
+            background: var(--bg-main); 
+        }
+
+        .chat-header { 
+            padding: 20px 24px; 
+            background: var(--bg-sidebar); 
+            border-bottom: 1px solid var(--border-color); 
+            font-weight: 700; 
+            font-size: 1.1rem; 
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chat-header i {
+            color: var(--text-muted);
+            font-size: 1.2rem;
+        }
+
+        .chat-messages { 
+            flex: 1; 
+            padding: 24px; 
+            overflow-y: auto; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 20px; 
+        }
+
+        /* Estilização das Mensagens */
+        .message { 
+            display: flex; 
+            gap: 16px; 
+            padding: 4px 8px;
+            border-radius: 8px;
+            transition: background 0.15s ease;
+        }
+
+        .message:hover {
+            background: rgba(255, 255, 255, 0.01);
+        }
+
+        .message img { 
+            width: 44px; 
+            height: 44px; 
+            border-radius: 50%; 
+            object-fit: cover; 
+            border: 2px solid rgba(255, 255, 255, 0.08); 
+        }
+
+        .message-content { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 4px;
+        }
+
+        .message .user-name { 
+            font-size: 0.95rem; 
+            color: var(--accent); 
+            font-weight: 600; 
+        }
+
+        .message .user-text { 
+            font-size: 0.98rem; 
+            color: var(--text-main);
+            white-space: pre-wrap; 
+            word-break: break-word; 
+            line-height: 1.4;
+        }
+
+        /* Input de Texto */
+        .chat-input-container { 
+            padding: 24px; 
+            background: var(--bg-main);
+        }
+
+        .chat-input-form { 
+            display: flex; 
+            background: var(--bg-card);
+            border-radius: 14px;
+            padding: 6px 8px;
+            border: 1px solid var(--border-color);
+            transition: border-color 0.2s ease;
+        }
+
+        .chat-input-form:focus-within {
+            border-color: rgba(0, 255, 204, 0.4);
+        }
+
+        .chat-input { 
+            flex: 1; 
+            background: transparent;
+            border: none;
+            padding: 14px 16px; 
+            color: var(--text-main); 
+            outline: none; 
+            font-size: 1rem; 
+        }
+
+        .chat-input::placeholder {
+            color: var(--text-muted);
+            opacity: 0.7;
+        }
+
+        /* Barra Lateral Direita (Perfil) */
+        .sidebar-right { 
+            width: 300px; 
+            background: var(--bg-sidebar); 
+            border-left: 1px solid var(--border-color); 
+            padding: 24px; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 28px; 
+        }
+
+        .sidebar-right h2 {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        .profile-card { 
+            background: var(--bg-card); 
+            padding: 28px 20px; 
+            border-radius: 20px; 
+            text-align: center; 
+            border: 1px solid var(--border-color); 
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .profile-card img { 
+            width: 90px; 
+            height: 90px; 
+            border-radius: 50%; 
+            object-fit: cover; 
+            margin-bottom: 16px; 
+            border: 3px solid var(--accent); 
+            box-shadow: 0 0 15px rgba(0, 255, 204, 0.2);
+        }
+
+        .profile-card h3 { 
+            font-size: 1.2rem; 
+            color: var(--text-main); 
+            font-weight: 600;
+        }
+
+        /* Customização dos Inputs de Edição */
+        .edit-profile-box { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 18px; 
+        }
+
+        .edit-profile-box label { 
+            font-size: 0.75rem; 
+            color: var(--text-muted); 
+            text-transform: uppercase; 
+            font-weight: 700; 
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .edit-profile-box input { 
+            width: 100%;
+            background: var(--bg-card); 
+            border: 1px solid var(--border-color); 
+            padding: 14px; 
+            border-radius: 10px; 
+            color: var(--text-main); 
+            outline: none; 
+            font-size: 0.95rem; 
+            transition: border-color 0.2s ease;
+        }
+
+        .edit-profile-box input:focus {
+            border-color: var(--accent);
+        }
+
+        .btn-save { 
+            background: var(--accent); 
+            color: #0b0c10; 
+            border: none; 
+            padding: 14px; 
+            border-radius: 10px; 
+            font-weight: 700; 
+            cursor: pointer; 
+            transition: all 0.2s ease;
+            font-size: 0.95rem;
+            margin-top: 4px;
+        }
+
+        .btn-save:hover { 
+            background: var(--accent-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 255, 204, 0.2);
+        }
+
+        /* Barra de rolagem customizada e moderna */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #2b303b; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #3a4150; }
     </style>
 </head>
 <body>
@@ -56,7 +337,7 @@
 
     <div class="chat-area">
         <div class="chat-header">
-            <i class="fa-solid fa-hashtag"></i> chat-geral
+            <i class="fa-solid fa-hashtag"></i> <span>chat-geral</span>
         </div>
         <div class="chat-messages" id="chatMessages"></div>
         <div class="chat-input-container">
@@ -86,7 +367,7 @@
     </div>
 
     <script>
-        // Configurações do seu Firebase vinculadas ao Realtime Database
+        // Mantendo suas configurações do Firebase intactas e funcionando!
         const firebaseConfig = {
             apiKey: "AIzaSyDegW2sEjWvx3Ih7U6vs45Gp8PeXyfJ90w",
             authDomain: "cyber-a41d9.firebaseapp.com",
@@ -119,7 +400,7 @@
         }
         initUser();
 
-        // Escuta novas mensagens em tempo real para todos os conectados
+        // Escuta novas mensagens em tempo real
         messagesRef.limitToLast(50).on('child_added', (snapshot) => {
             const data = snapshot.val();
             const chatMessages = document.getElementById('chatMessages');
