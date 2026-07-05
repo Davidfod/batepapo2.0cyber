@@ -10,125 +10,127 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
     <style>
-        /* Cores e Configurações Gerais */
+        /* Cores baseadas no tema Dark do Discord */
         :root {
-            --bg-main: #0f1115;
-            --bg-sidebar: #161920;
-            --bg-card: #1f232b;
+            --bg-channels: #2f3136;
+            --bg-chat: #36393f;
+            --bg-profile: #2f3136;
+            --bg-card: #202225;
+            --bg-input: #40444b;
             --accent: #00ffcc;
-            --accent-hover: #00ccaa;
-            --text-main: #f5f6f8;
-            --text-muted: #8a94a6;
-            --border-color: rgba(255, 255, 255, 0.06);
+            --text-main: #dcddde;
+            --text-white: #ffffff;
+            --text-muted: #72767d;
+            --border-color: rgba(0, 0, 0, 0.2);
         }
 
         * { 
             margin: 0; 
             padding: 0; 
             box-sizing: border-box; 
-            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif; 
+            font-family: 'Segoe UI', BlinkMacSystemFont, sans-serif; 
         }
 
         body { 
-            background: var(--bg-main); 
+            background: var(--bg-chat); 
             color: var(--text-main); 
             display: flex; 
             height: 100vh; 
+            width: 100vw;
             overflow: hidden; 
         }
 
-        /* Barra Lateral Esquerda (Canais) */
+        /* 1. BARRA LATERAL ESQUERDA (Canais de Voz - Estilo Discord) */
         .sidebar-left { 
-            width: 260px; 
-            background: var(--bg-sidebar); 
-            border-right: 1px solid var(--border-color); 
+            width: 240px; 
+            background: var(--bg-channels); 
             display: flex; 
             flex-direction: column; 
-            padding: 24px 16px; 
-            justify-content: space-between; 
+            padding: 20px 12px; 
+            justify-content: space-between;
+            flex-shrink: 0;
         }
 
         .sidebar-left h2 { 
-            font-size: 0.85rem; 
-            margin-bottom: 16px; 
+            font-size: 0.75rem; 
+            margin-bottom: 12px; 
             color: var(--text-muted); 
             text-transform: uppercase; 
-            letter-spacing: 1.5px; 
-            padding-left: 8px;
+            letter-spacing: 1px; 
+            font-weight: 700;
         }
 
         .btn-call { 
             width: 100%; 
             display: flex; 
             align-items: center; 
-            gap: 14px; 
+            gap: 12px; 
             background: transparent; 
-            border: 1px solid transparent; 
-            color: var(--text-muted); 
-            padding: 12px 16px; 
-            border-radius: 12px; 
+            border: none; 
+            color: var(--text-main); 
+            padding: 10px 8px; 
+            border-radius: 6px; 
             cursor: pointer; 
-            font-weight: 600; 
-            transition: all 0.25s ease; 
+            font-weight: 500; 
+            font-size: 0.95rem;
+            transition: background 0.2s; 
+            text-align: left;
         }
 
         .btn-call i { 
-            background: #2b2f3a; 
-            padding: 10px; 
-            border-radius: 50%; 
-            font-size: 0.95rem; 
-            width: 36px; 
-            height: 36px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            transition: all 0.25s ease;
-            color: var(--text-main);
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            width: 24px;
+            text-align: center;
         }
 
         .btn-call:hover {
-            background: rgba(255, 255, 255, 0.03);
-            color: var(--text-main);
+            background: rgba(79, 84, 92, 0.32);
+            color: var(--text-white);
+        }
+
+        .btn-call:hover i {
+            color: var(--text-white);
         }
 
         .btn-call.active { 
-            border-color: rgba(0, 255, 204, 0.2); 
-            background: rgba(0, 255, 204, 0.06); 
+            background: rgba(79, 84, 92, 0.6); 
             color: var(--accent);
         }
 
         .btn-call.active i { 
-            background: var(--accent); 
-            color: #000000; 
-            box-shadow: 0 0 12px rgba(0, 255, 204, 0.4);
+            color: var(--accent);
         }
 
         .version-text { 
             font-size: 0.7rem; 
             color: var(--text-muted); 
-            letter-spacing: 2px; 
-            font-weight: bold; 
             text-align: center;
-            opacity: 0.5;
+            letter-spacing: 1px;
         }
 
-        /* Área Central do Chat */
+        /* 2. ÁREA CENTRAL DO CHAT (Estilo Discord) */
         .chat-area { 
             flex: 1; 
             display: flex; 
             flex-direction: column; 
-            background: var(--bg-main); 
+            background: var(--bg-chat); 
+            min-width: 400px;
         }
 
         .chat-header { 
-            padding: 20px 24px; 
-            background: var(--bg-sidebar); 
+            height: 48px;
+            padding: 0 16px; 
+            background: var(--bg-chat); 
             border-bottom: 1px solid var(--border-color); 
-            font-weight: 700; 
-            font-size: 1.1rem; 
+            font-weight: bold; 
+            font-size: 1rem; 
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
+            color: var(--text-white);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+            flex-shrink: 0;
         }
 
         .chat-header i {
@@ -138,144 +140,137 @@
 
         .chat-messages { 
             flex: 1; 
-            padding: 24px; 
+            padding: 20px 16px; 
             overflow-y: auto; 
             display: flex; 
             flex-direction: column; 
-            gap: 20px; 
+            gap: 16px; 
         }
 
-        /* Estilização das Mensagens */
+        /* Estrutura de Balão e Linhas de Mensagem */
         .message { 
             display: flex; 
             gap: 16px; 
             padding: 4px 8px;
-            border-radius: 8px;
-            transition: background 0.15s ease;
+            border-radius: 4px;
         }
 
         .message:hover {
-            background: rgba(255, 255, 255, 0.01);
+            background: rgba(4, 4, 5, 0.07);
         }
 
         .message img { 
-            width: 44px; 
-            height: 44px; 
+            width: 40px; 
+            height: 40px; 
             border-radius: 50%; 
             object-fit: cover; 
-            border: 2px solid rgba(255, 255, 255, 0.08); 
+            flex-shrink: 0;
         }
 
         .message-content { 
             display: flex; 
             flex-direction: column; 
-            gap: 4px;
+            justify-content: center;
         }
 
         .message .user-name { 
             font-size: 0.95rem; 
-            color: var(--accent); 
-            font-weight: 600; 
+            color: var(--text-white); 
+            font-weight: 500; 
+            margin-bottom: 4px;
         }
 
         .message .user-text { 
-            font-size: 0.98rem; 
+            font-size: 0.95rem; 
             color: var(--text-main);
             white-space: pre-wrap; 
             word-break: break-word; 
-            line-height: 1.4;
+            line-height: 1.375;
         }
 
-        /* Input de Texto */
+        /* Caixa de Entrada de Texto inferior */
         .chat-input-container { 
-            padding: 24px; 
-            background: var(--bg-main);
+            padding: 0 16px 24px 16px; 
+            background: var(--bg-chat);
+            flex-shrink: 0;
         }
 
         .chat-input-form { 
             display: flex; 
-            background: var(--bg-card);
-            border-radius: 14px;
-            padding: 6px 8px;
-            border: 1px solid var(--border-color);
-            transition: border-color 0.2s ease;
-        }
-
-        .chat-input-form:focus-within {
-            border-color: rgba(0, 255, 204, 0.4);
+            background: var(--bg-input);
+            border-radius: 8px;
+            padding: 2px 4px;
         }
 
         .chat-input { 
             flex: 1; 
             background: transparent;
             border: none;
-            padding: 14px 16px; 
-            color: var(--text-main); 
+            padding: 12px 16px; 
+            color: var(--text-white); 
             outline: none; 
-            font-size: 1rem; 
+            font-size: 0.95rem; 
         }
 
         .chat-input::placeholder {
             color: var(--text-muted);
-            opacity: 0.7;
         }
 
-        /* Barra Lateral Direita (Perfil) */
+        /* 3. BARRA LATERAL DIREITA (Perfil com Rolagem Corrigida) */
         .sidebar-right { 
-            width: 300px; 
-            background: var(--bg-sidebar); 
+            width: 280px; 
+            background: var(--bg-profile); 
             border-left: 1px solid var(--border-color); 
-            padding: 24px; 
+            padding: 20px 16px; 
             display: flex; 
             flex-direction: column; 
-            gap: 28px; 
+            gap: 20px; 
+            overflow-y: auto; /* Permite descer se a tela for pequena */
+            flex-shrink: 0;
         }
 
         .sidebar-right h2 {
-            font-size: 0.85rem;
+            font-size: 0.75rem;
             color: var(--text-muted);
             text-transform: uppercase;
-            letter-spacing: 1.5px;
+            letter-spacing: 0.5px;
+            font-weight: 700;
         }
 
         .profile-card { 
             background: var(--bg-card); 
-            padding: 28px 20px; 
-            border-radius: 20px; 
+            padding: 20px 16px; 
+            border-radius: 8px; 
             text-align: center; 
-            border: 1px solid var(--border-color); 
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
 
         .profile-card img { 
-            width: 90px; 
-            height: 90px; 
+            width: 80px; 
+            height: 80px; 
             border-radius: 50%; 
             object-fit: cover; 
-            margin-bottom: 16px; 
-            border: 3px solid var(--accent); 
-            box-shadow: 0 0 15px rgba(0, 255, 204, 0.2);
+            margin-bottom: 12px; 
+            border: 2px solid var(--accent); 
         }
 
         .profile-card h3 { 
-            font-size: 1.2rem; 
-            color: var(--text-main); 
+            font-size: 1.1rem; 
+            color: var(--text-white); 
             font-weight: 600;
         }
 
-        /* Customização dos Inputs de Edição */
+        /* Inputs para Alterar Perfil */
         .edit-profile-box { 
             display: flex; 
             flex-direction: column; 
-            gap: 18px; 
+            gap: 16px; 
         }
 
         .edit-profile-box label { 
-            font-size: 0.75rem; 
+            font-size: 0.7rem; 
             color: var(--text-muted); 
             text-transform: uppercase; 
             font-weight: 700; 
-            letter-spacing: 1px;
             margin-bottom: 6px;
             display: block;
         }
@@ -283,13 +278,12 @@
         .edit-profile-box input { 
             width: 100%;
             background: var(--bg-card); 
-            border: 1px solid var(--border-color); 
-            padding: 14px; 
-            border-radius: 10px; 
+            border: 1px solid rgba(0,0,0,0.3); 
+            padding: 10px; 
+            border-radius: 4px; 
             color: var(--text-main); 
             outline: none; 
-            font-size: 0.95rem; 
-            transition: border-color 0.2s ease;
+            font-size: 0.9rem; 
         }
 
         .edit-profile-box input:focus {
@@ -297,29 +291,26 @@
         }
 
         .btn-save { 
-            background: var(--accent); 
-            color: #0b0c10; 
+            background: #5865F2; /* Azul Discord */
+            color: var(--text-white); 
             border: none; 
-            padding: 14px; 
-            border-radius: 10px; 
-            font-weight: 700; 
+            padding: 10px; 
+            border-radius: 4px; 
+            font-weight: 600; 
             cursor: pointer; 
-            transition: all 0.2s ease;
-            font-size: 0.95rem;
-            margin-top: 4px;
+            transition: background 0.2s;
+            font-size: 0.9rem;
         }
 
         .btn-save:hover { 
-            background: var(--accent-hover);
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(0, 255, 204, 0.2);
+            background: #4752c4;
         }
 
-        /* Barra de rolagem customizada e moderna */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #2b303b; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #3a4150; }
+        /* Customização fina de barras de rolagem */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-channels); }
+        ::-webkit-scrollbar-thumb { background: #202225; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #111214; }
     </style>
 </head>
 <body>
@@ -328,7 +319,7 @@
         <div>
             <h2>Canais de Voz</h2>
             <button class="btn-call" id="callBtn" onclick="toggleCall()">
-                <i class="fa-solid fa-phone"></i>
+                <i class="fa-solid fa-volume-high"></i>
                 <span>Call 1</span>
             </button>
         </div>
@@ -348,7 +339,7 @@
     </div>
 
     <div class="sidebar-right">
-        <h2>Seu Perfil</h2>
+        <h2>Membro da Sala</h2>
         <div class="profile-card">
             <img id="currentAvatar" src="" alt="Sua Foto">
             <h3 id="currentName">Carregando...</h3>
@@ -367,7 +358,7 @@
     </div>
 
     <script>
-        // Mantendo suas configurações do Firebase intactas e funcionando!
+        // Credenciais oficiais e corrigidas do teu Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyDegW2sEjWvx3Ih7U6vs45Gp8PeXyfJ90w",
             authDomain: "cyber-a41d9.firebaseapp.com",
@@ -378,7 +369,6 @@
             databaseURL: "https://cyber-a41d9-default-rtdb.firebaseio.com/"
         };
         
-        // Inicializando o Banco de Dados
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
         const messagesRef = database.ref('messages');
@@ -400,7 +390,7 @@
         }
         initUser();
 
-        // Escuta novas mensagens em tempo real
+        // Sincroniza e puxa mensagens rolando o scroll automaticamente
         messagesRef.limitToLast(50).on('child_added', (snapshot) => {
             const data = snapshot.val();
             const chatMessages = document.getElementById('chatMessages');
